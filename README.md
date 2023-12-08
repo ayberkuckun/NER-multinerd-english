@@ -3,30 +3,30 @@ Named Entity Recognition (NER) on the English subset of MultiNERD.
 
 ## How to run the code:
 ### Build the environment
-- This repo is tested with `Python 3.9`.
+This repository is tested with `Python 3.9`. To set up the environment, execute the following commands:
 ```
 python3.9 -m venv .venv
 source .venv/bin/activate
 ```
 
 ### Install the requirements
-- First install PyTorch by following the installation instructions in their
-[Official website](https://pytorch.org/get-started/locally/). This repo is tested with 
+- Before proceeding, make sure to install PyTorch by following the installation instructions on their
+[Official website](https://pytorch.org/get-started/locally/). This repository is tested with
 `PyTorch v1.12.1` and `Conda 11.3`.
 
-- Later, you can install the specific dependencies of this repo with:
+- Afterward, install the specific dependencies of this repository with:
 ```
 pip install -r requirements.txt
 ```
 
 ### Set the Configurations
-- Configurations for the experiment are located in the `configs.yaml`.
+- Configuration settings for the experiment are stored in the `configs.yaml` file.
 
 ### Run the experiment
+Execute the following command to run the experiment:
 ```
 python experiment.py --config_path --log_to_wandb
 ```
-- `--config_path`: Path to user defined configs.
-
-- `--log_to_wandb` Allows logging the metrics to Weights & Biases. If you don't want to log the training
-and evaluation values to wandb, remove the flag.
+- `--config_path`: Path to user-defined configurations.
+- `--log_to_wandb` Allows logging metrics to Weights & Biases. If you prefer not to log training and 
+evaluation values to wandb, you can remove this flag.
