@@ -1,0 +1,14 @@
+# HuggingFace
+transformers
+datasets
+accelerate
+
+# Evaluation metric
+seqeval
+evaluate
+
+# For loading user configs
+pyyaml
+
+# For experiment tracking
+wandb
