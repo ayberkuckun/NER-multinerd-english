@@ -6,16 +6,16 @@ def get_model(configs, system):
     Gets the model either from HuggingFace or disk.
     """
     model = AutoModelForTokenClassification.from_pretrained(
-        configs["model_checkpoint"], id2label=configs[system]["id2label"], label2id=configs[system]["label2id"])
+        configs[system]["model_checkpoint"], id2label=configs[system]["id2label"], label2id=configs[system]["label2id"])
 
     return model
 
 
-def get_tokenizer(configs):
+def get_tokenizer(configs, system):
     """
     Gets the tokenizer from HuggingFace.
     """
-    tokenizer = AutoTokenizer.from_pretrained(configs["model_checkpoint"], use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(configs[system]["model_checkpoint"], use_fast=True)
 
     return tokenizer
 

@@ -1,25 +1,21 @@
 # Set to an integer for a specific number of cores to use or "auto" to let the processes use all
 # the available cores.
-multiprocess: auto
+multiprocess: 4
 
 # Name of the dataset to download from HuggingFace.
 dataset_name: Babelscape/multinerd
 
-# Path to the model checkpoint. Either on Huggingface or on disk.
-model_checkpoint: distilbert-base-multilingual-cased
-
 # Training Arguments for Trainer. You can choose to add or remove any arguments.
 training_arguments: {
-  output_dir: models/multinerd/distilbert-base-multilingual-cased,
   learning_rate: 5.0e-5,
   weight_decay: 0.01,
-  num_train_epochs: 1,
+  num_train_epochs: 5,
   per_device_train_batch_size: 32,
   per_device_eval_batch_size: 32,
   gradient_accumulation_steps: 4,
   load_best_model_at_end: True,
   fp16: True,
-  report_to: None,
+  report_to: "none",
   evaluation_strategy: epoch,
   save_strategy: epoch,
   logging_strategy: steps,
@@ -31,12 +27,18 @@ wandb_env_var_path: wandb_env_var.yaml
 
 # Configurations for System A.
 systemA: {
+  # Path to the model checkpoint. Either on Huggingface or on disk.
+  model_checkpoint: distilbert-base-multilingual-cased,
+
   # Path to save/load System A dataset to/from disk.
-  dataset_path: processed_dataset/multinerd/SystemA,
+  dataset_path: processed_dataset/multinerd/systemA,
 
   # Configurations for dataset loading/processing.
   load_ds_from_disk: False,
   preprocess: True,
+
+  # Save directory for the model.
+  output_dir: models/multinerd/distilbert-base-multilingual-cased/systemA,
 
   # System A Label to ID dictionary.
   label2id: {
@@ -76,15 +78,21 @@ systemA: {
 
 # Configurations for System B.
 systemB: {
+  # Path to the model checkpoint. Either on Huggingface or on disk.
+  model_checkpoint: distilbert-base-multilingual-cased,
+
   # Path to save/load System B dataset to/from disk.
-  dataset_path: processed_dataset/multinerd/SystemB,
+  dataset_path: processed_dataset/multinerd/systemB,
 
   # Configurations for dataset loading/processing.
   load_ds_from_disk: False,
   preprocess: True,
 
+  # Save directory for the model.
+  output_dir: models/multinerd/distilbert-base-multilingual-cased/systemB,
+
   # Removed entity tags of MultiNERD.
-  removed_tags: [ 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 ],
+  removed_tags: [ 9, 10, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 ],
 
   # Changed entity tags of MultiNERD.
   changed_tags: {

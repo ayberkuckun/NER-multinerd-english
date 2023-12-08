@@ -37,7 +37,7 @@ def _preprocess_dataset(tokenizer, dataset, configs, system):
     )
     tokenized_dataset.save_to_disk(configs[system]['dataset_path'])
 
-    return dataset
+    return tokenized_dataset
 
 
 def _get_process_system_b_dataset_fn(configs):
@@ -47,7 +47,7 @@ def _get_process_system_b_dataset_fn(configs):
     def process_system_b_dataset(example):
         """
         Processes dataset in order to remove entity tags specified by the user.
-        After that fixes the numbering of the tags as specified by the user.
+        Fixes the numbering of the tags as specified by the user.
         """
         for i, tag in enumerate(example["ner_tags"]):
             if tag in configs["systemB"]["removed_tags"]:
@@ -55,9 +55,6 @@ def _get_process_system_b_dataset_fn(configs):
 
             elif tag in configs["systemB"]["changed_tags"].keys():
                 example["ner_tags"][i] = configs["systemB"]["changed_tags"][tag]
-
-            else:
-                pass
 
         return example
 
@@ -111,3 +108,23 @@ def _align_labels_with_tokens(labels, token_word_ids):
         pre_token_word_id = token_word_id
 
     return aligned_labels
+
+
+def get_prepare_system_a_test_set_fn(configs):
+    """
+    Getter of prepare_system_a_test_set function.
+    """
+    def prepare_system_a_test_set(example):
+        """
+        Fixes the tag numbering as suitable to the system A training dataset.
+        """
+        reverse_mapping = {v: k for k, v in configs["systemB"]["changed_tags"].items()}
+
+        for i, tag in enumerate(example["labels"]):
+            if tag in reverse_mapping.keys():
+                example["labels"][i] = reverse_mapping[tag]
+
+        return example
+
+    return prepare_system_a_test_set
+

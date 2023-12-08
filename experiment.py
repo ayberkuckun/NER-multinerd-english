@@ -15,8 +15,8 @@ def experiment(config_path, log_to_wandb):
     # Get configs.
     configs = configs_helper.get_configs(config_path)
 
-    # Prepare Tokenizer and Data Collator
-    tokenizer = model_helper.get_tokenizer(configs=configs)
+    # Prepare Tokenizer and Data Collator. Both systems use the same tokenizer.
+    tokenizer = model_helper.get_tokenizer(configs=configs, system="systemA")
     data_collator = model_helper.get_data_collator(tokenizer=tokenizer)
 
     # Prepare datasets.
@@ -49,7 +49,7 @@ def experiment(config_path, log_to_wandb):
         wandb.login()
         wandb.init(
             project=configs["wandb_project_name"],
-            name=f"systemA_{configs['dataset_name']}-{configs['model_checkpoint']}"
+            name=f"systemA_{configs['dataset_name']}-{configs['systemA']['model_checkpoint']}"
         )
 
     # Finetune system A.
@@ -63,15 +63,22 @@ def experiment(config_path, log_to_wandb):
     )
     systemA_trainer.train()
 
-    # Evaluate system A.
-    systemA_trainer.evaluate(systemB_dataset['test'], metric_key_prefix="test")
+    # Evaluate system A. We transform system B dataset in order to evaluate on the common NER categories.
+    sysytemA_test_set = systemB_dataset['test'].map(
+        dataset_helper.get_prepare_system_a_test_set_fn(configs), num_proc=configs["num_proc"]
+    )
+    systemA_metrics = systemA_trainer.evaluate(sysytemA_test_set, metric_key_prefix="test")
+
+    # Overall precision value needs to be recalculated.
+    systemA_metrics = training_helper.fix_system_a_metrics(systemA_metrics, log_to_wandb)
+    print(systemA_metrics)
 
     # Start Logging for system B.
     if log_to_wandb:
         wandb.finish()
         wandb.init(
             project=configs["wandb_project_name"],
-            name=f"systemB_{configs['dataset_name']}-{configs['model_checkpoint']}"
+            name=f"systemB_{configs['dataset_name']}-{configs['systemB']['model_checkpoint']}"
         )
 
     # Finetune system B.
@@ -79,13 +86,15 @@ def experiment(config_path, log_to_wandb):
         model=systemB_model,
         tokenizer=tokenizer,
         data_collator=data_collator,
-        dataset=systemB_dataset, configs=configs,
+        dataset=systemB_dataset,
+        configs=configs,
         system="systemB"
     )
     systemB_trainer.train()
 
     # Evaluate system B.
-    systemB_trainer.evaluate(systemB_dataset['test'], metric_key_prefix="test")
+    systemB_metrics = systemB_trainer.evaluate(systemB_dataset['test'], metric_key_prefix="test")
+    print(systemB_metrics)
 
     # Finish Logging.
     if log_to_wandb:
