@@ -12,7 +12,7 @@ source .venv/bin/activate
 ### Install the requirements
 - Before proceeding, make sure to install PyTorch by following the installation instructions on their
 [Official website](https://pytorch.org/get-started/locally/). This repository is tested with
-`PyTorch v1.12.1` and `Conda 11.3`.
+`PyTorch v1.12.1` and `CUDA 11.3`.
 
 - Afterward, install the specific dependencies of this repository with:
 ```
